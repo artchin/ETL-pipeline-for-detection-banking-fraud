@@ -38,7 +38,8 @@ python main.py
 ├── sql_scripts/         # DDL и DML скрипты
 ├── py_scripts/          # Вспомогательные модули
 ├── archive/             # Обработанные файлы
-└── *.csv, *.xlsx        # Исходные данные
+└── data /
+   *.csv, *.xlsx         # Исходные данные
 ```
 
 ## Стек
