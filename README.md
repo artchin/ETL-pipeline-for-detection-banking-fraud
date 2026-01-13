@@ -1,2 +1,46 @@
-# ETL-pipeline-for-detection-banking-fraud
-Bank fraud detection ETL pipeline built with Python + PostgreSQL.  Incremental data loading from CSV/XLSX/Oracle, SCD1/SCD2 dimensions,  4 fraud pattern detection algorithms.
+# Bank Fraud Detection ETL Pipeline
+
+ETL-процесс для ежедневной загрузки банковских данных и автоматического 
+выявления мошеннических операций.
+
+## Архитектура
+
+**Источники данных:**
+- Транзакции (CSV) — ежедневный инкремент
+- Терминалы (XLSX) — полный срез
+- Чёрный список паспортов (XLSX) — накопление с начала месяца
+- Карты, счета, клиенты — Oracle DB (схема BANK)
+
+**Слои хранилища:**
+- `STG_*` — staging-таблицы для первичной загрузки
+- `DWH_FACT_*` — факты (транзакции, blacklist)
+- `DWH_DIM_*` — измерения SCD1 (terminals, cards, accounts, clients)
+- `REP_FRAUD` — витрина мошеннических операций
+
+## Детектируемые типы мошенничества
+
+1. Операция с просроченным/заблокированным паспортом
+2. Операция при недействующем договоре (счёте)
+3. Операции в разных городах в течение часа
+4. Подбор суммы: >3 операций за 20 минут с убывающей суммой, 
+   все отклонены кроме последней
+
+## Запуск
+```bash
+python main.py
+```
+
+Обработанные файлы переименовываются в `.backup` и перемещаются в `archive/`.
+
+## Структура проекта
+```
+├── main.py              # Основной ETL-процесс
+├── sql_scripts/         # DDL и DML скрипты
+├── py_scripts/          # Вспомогательные модули
+├── archive/             # Обработанные файлы
+└── *.csv, *.xlsx        # Исходные данные
+```
+
+## Стек
+
+Python, PostgreSQL, pandas, psycopg2
